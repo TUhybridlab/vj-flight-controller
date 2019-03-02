@@ -228,7 +228,12 @@ void setup() {
 // ================================================================
 void loop() {
   // if programming failed, don't try to do anything
-  if (!dmpReady) return;
+  if (!dmpReady) {
+    wdt_disable();
+    delay(1000);
+    setup();
+    return;
+  }
 
   readData();
 
