@@ -36,21 +36,13 @@ THE SOFTWARE.
 
 #include "MPU6050.h"
 
-/** Default constructor, uses default I2C address.
- * @see MPU6050_DEFAULT_ADDRESS
- */
-MPU6050::MPU6050() {
-    devAddr = MPU6050_DEFAULT_ADDRESS;
-}
-
 /** Specific address constructor.
- * @param address I2C address
+ * @param address I2C address, uses default I2C address if none is specified
  * @see MPU6050_DEFAULT_ADDRESS
  * @see MPU6050_ADDRESS_AD0_LOW
  * @see MPU6050_ADDRESS_AD0_HIGH
  */
-MPU6050::MPU6050(uint8_t address) {
-    devAddr = address;
+MPU6050::MPU6050(uint8_t address):devAddr(address) {
 }
 
 /** Power on and prepare for general usage.
@@ -2741,7 +2733,11 @@ uint8_t MPU6050::getFIFOByte() {
     return buffer[0];
 }
 void MPU6050::getFIFOBytes(uint8_t *data, uint8_t length) {
-    I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_R_W, length, data);
+    if(length > 0){
+        I2Cdev::readBytes(devAddr, MPU6050_RA_FIFO_R_W, length, data);
+    } else {
+    	*data = 0;
+    }
 }
 /** Write byte to FIFO buffer.
  * @see getFIFOByte()
@@ -3033,7 +3029,7 @@ bool MPU6050::writeMemoryBlock(const uint8_t *data, uint16_t dataSize, uint8_t b
     setMemoryBank(bank);
     setMemoryStartAddress(address);
     uint8_t chunkSize;
-    uint8_t *verifyBuffer;
+    uint8_t *verifyBuffer=0;
     uint8_t *progBuffer=0;
     uint16_t i;
     uint8_t j;
