@@ -221,10 +221,6 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
 
   while (Serial.available() && Serial.read()); // empty buffer
-
-  // Lower Watchdog to 60msec
-  wdt_disable();
-  wdt_enable(WDTO_60MS);
 }
 
 // ================================================================
